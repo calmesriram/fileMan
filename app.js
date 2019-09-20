@@ -1,6 +1,7 @@
 require('custom-env').env("staging")
 var multer  = require('multer')
 var personsechma = require('./app/schema/people_mongodb_schema')
+var filemansechma = require('./app/schema/File_man_schema')
 var express = require("express");
 var bodyparser = require("body-parser");
 var jwt = require("jsonwebtoken");
@@ -17,6 +18,11 @@ const storage = multer.diskStorage({
       cb(null, './app/appAsserts');
     },
     filename: function(req, file, cb) {
+        // var fileMan = new filemansechma({
+        //     fileName: new Date().toISOString() + file.originalname,
+        //     createdAt: new Date()
+        // })
+        // fileMan.save()
       cb(null, new Date().toISOString() + file.originalname);
     }
   });
@@ -217,12 +223,28 @@ protectedroutes.get('/allusers',(req,res)=>{
         }
     })   
 })
+
+// app.get('/all',(req,res)=>{    
+
+//     filemansechma.find({},(err,data)=>{
+//         if(err){
+//             console.log(err,"Error")
+//             return res.end();
+//         }
+//         if(data){
+//             console.log(data)
+//             return res.json(data);            
+//         }
+//     })   
+// })
 app.get("/",(req,res)=>{
     res.json({"Message":"Application Emitted","Live":"active","status":true})
     res.end();
 })
 
-protectedroutes.post('/profile', upload.single('avatar'), function (req, res, next) {
+app.post('/profile', upload.single('avatar'), function (req,file, res, next) {
+    console.log(req.file,"rpl;")
+    console.log(req.body,"rpl;")
     res.end("Uploaded");
     // req.file is the `avatar` file
     // req.body will hold the text fields, if there were any
